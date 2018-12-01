@@ -1,0 +1,58 @@
+---
+title: "Showing causal effect expressions in Rmarkdown"
+subtitle: ""
+author: "`r Sys.Date()` | John Hower (jchower@)"
+output: 
+  html_document: 
+    smart: false
+---
+
+```{r, setup,echo=FALSE,dpi=300,fig.cap=paste("")}
+
+open_html <- FALSE
+
+library(dplyr)
+library(readr)
+library(forcats)
+library(ggplot2)
+library(causaleffect)
+library(igraph)
+library(latex2exp)
+
+g <- graph.formula(
+  smoke -+ tar
+, tar -+ cancer
+, hidden -+ smoke
+, hidden -+ cancer
+)
+plot(g)
+
+effect <- causal.effect(
+  y = "cancer"
+, x = "smoke"
+, G = g
+, primes = TRUE
+, simp = TRUE
+, prune = TRUE
+, expr = FALSE
+)
+
+effect_string <- effect %>%
+  stringr::str_replace("\\\\", "\\")
+effect_string
+
+```
+
+The causal effect is `r effect_string`
+
+```{r, open,echo=FALSE,dpi=300,fig.cap=paste("")}
+if (open_html) {
+  system(
+    glue::glue("open {here::here()}/rmd_try.html")
+  )
+}
+
+```
+
+1. If sumset exists
+   1. 
